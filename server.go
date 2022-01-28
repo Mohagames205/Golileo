@@ -1,10 +1,14 @@
 package main
 
 import (
-	"github.com/Mohagames205/Golileo/database"
+	"context"
+	"github.com/Mohagames205/Golileo/skin"
+	"github.com/Mohagames205/Golileo/util"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
+	"os"
 )
 
 func main() {
@@ -12,24 +16,102 @@ func main() {
 		AppName: "Golileo",
 	})
 
+	/*
+		app.Use(basicauth.New(basicauth.Config{
+			Users: map[string]string{
+				"admin": "123456",
+			},
+		}))
+	*/
+
+	err := util.InitFs()
+	if err != nil {
+		log.Fatal(err)
+	}
+	util.InitDatabase()
+
 	app.Get("/", func(c *fiber.Ctx) error {
-		return c.SendString("Dag wereld 👋!")
+		return c.SendString("Welkom bij Golileo. Dit is de skin API die binnen GalactixPE wordt gebruikt. ")
 	})
 
 	app.Post("/api/skin", func(ctx *fiber.Ctx) error {
-		database, context := database.Database()
-		skinCollection := database.Collection("skins")
-		_, err := skinCollection.InsertOne(context, bson.D{
-			{Key: "username", Value: "test"},
-			{Key: "skinstring", Value: "aabbcc"},
-		})
 
-		if err != nil{
+		payload := skin.Skin{
+			Username: `json:"username"`,
+			Skin:     `json:"skin"`,
+		}
+
+		if err := ctx.BodyParser(&payload); err != nil {
+			return err
+		}
+
+		skinCollection := util.Database().Collection("skins")
+
+		opts := options.Update().SetUpsert(true)
+		filter := bson.D{
+			{"username", payload.Username},
+		}
+		update := bson.D{{"$set", bson.D{
+			{Key: "username", Value: payload.Username},
+			{Key: "skinstring", Value: payload.Skin}},
+		}}
+
+		_, err := skinCollection.UpdateOne(context.TODO(), filter, update, opts)
+
+		err = payload.SaveFullImage()
+		err = payload.SaveHeadImage()
+
+		if err != nil {
 			log.Println(err)
 		}
 
-		return ctx.SendString("Skin has been inserted into the database")
+		return ctx.SendString("Skin has been inserted into the util")
 	})
 
-	app.Listen(":3000")
+	app.Get("/api/skin/:username/raw", func(ctx *fiber.Ctx) error {
+
+		skinCollection := util.Database().Collection("skins")
+
+		var skinResult bson.M
+		err := skinCollection.FindOne(context.TODO(), bson.M{"username": ctx.Params("username")}).Decode(&skinResult)
+		if err != nil {
+			return fiber.NewError(404, "Username not found")
+		}
+
+		return ctx.JSON(fiber.Map{"username": ctx.Params("username"), "skinstring": skinResult["skinstring"]})
+	})
+
+	app.Get("/api/skin/:username/img/head", func(ctx *fiber.Ctx) error {
+
+		skinCollection := util.Database().Collection("skins")
+
+		var skinResult bson.M
+		err := skinCollection.FindOne(context.TODO(), bson.M{"username": ctx.Params("username")}).Decode(&skinResult)
+		if err != nil {
+			return fiber.NewError(404, "Username not found")
+		}
+
+		skinStruct := skin.S(skinResult["username"].(string), skinResult["skinstring"].(string))
+
+		workingDir, _ := os.Getwd()
+		return ctx.SendFile(workingDir + "\\images\\head\\" + skinStruct.Username + ".png")
+	})
+
+	app.Get("/api/skin/:username/img/full", func(ctx *fiber.Ctx) error {
+
+		skinCollection := util.Database().Collection("skins")
+
+		var skinResult bson.M
+		err := skinCollection.FindOne(context.TODO(), bson.M{"username": ctx.Params("username")}).Decode(&skinResult)
+		if err != nil {
+			return fiber.NewError(404, "Username not found")
+		}
+
+		skinStruct := skin.S(skinResult["username"].(string), skinResult["skinstring"].(string))
+
+		workingDir, _ := os.Getwd()
+		return ctx.SendFile(workingDir + "\\images\\full\\" + skinStruct.Username + ".png")
+	})
+
+	log.Fatal(app.Listen(":3000"))
 }
