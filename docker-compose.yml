@@ -5,7 +5,7 @@ services:
     image: debian
     restart: unless-stopped
     ports:
-      - "3000"
+      - "1369:3000"
     volumes:
       - .:/home/go/app
     networks:
