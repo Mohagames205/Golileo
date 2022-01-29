@@ -115,7 +115,7 @@ func main() {
 	app.Get("/cdn/skinImage/:uuid", func(ctx *fiber.Ctx) error {
 		workingDir, _ := os.Getwd()
 		uuid := ctx.Params("uuid")
-		return ctx.SendFile(workingDir + "\\images\\" + uuid + ".png")
+		return ctx.SendFile(workingDir + "/images/" + uuid + ".png")
 	})
 
 	log.Fatal(app.Listen(":3000"))
