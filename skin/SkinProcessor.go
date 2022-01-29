@@ -69,7 +69,7 @@ func (s *Skin) ConvertToImage() (*image.RGBA, error) {
 func (s *Skin) SaveFullImage() (string, error) {
 	workingDirectory, _ := os.Getwd()
 	uuid := pseudo_uuid()
-	f, err := os.Create(workingDirectory + "\\images\\" + uuid + ".png")
+	f, err := os.Create(workingDirectory + "/images/" + uuid + ".png")
 
 	defer f.Close()
 
@@ -85,7 +85,7 @@ func (s *Skin) SaveFullImage() (string, error) {
 func (s *Skin) SaveHeadImage() (string, error) {
 	workingDirectory, _ := os.Getwd()
 	uuid := pseudo_uuid()
-	f, err := os.Create(workingDirectory + "\\images\\" + uuid + ".png")
+	f, err := os.Create(workingDirectory + "/images/" + uuid + ".png")
 
 	if err != nil {
 		log.Fatal(err)
