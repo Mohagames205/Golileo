@@ -3,7 +3,9 @@ package skin
 import (
 	"bufio"
 	"bytes"
+	"crypto/rand"
 	"encoding/base64"
+	"fmt"
 	"image"
 	"image/color"
 	"image/png"
@@ -64,9 +66,10 @@ func (s *Skin) ConvertToImage() (*image.RGBA, error) {
 	return alphaImage, err
 }
 
-func (s *Skin) SaveFullImage() error {
+func (s *Skin) SaveFullImage() (string, error) {
 	workingDirectory, _ := os.Getwd()
-	f, err := os.Create(workingDirectory + "\\images\\full\\" + s.Username + ".png")
+	uuid := pseudo_uuid()
+	f, err := os.Create(workingDirectory + "\\images\\" + uuid + ".png")
 
 	defer f.Close()
 
@@ -76,12 +79,13 @@ func (s *Skin) SaveFullImage() error {
 	err = png.Encode(w, skinImage)
 	err = w.Flush()
 
-	return err
+	return uuid, err
 }
 
-func (s *Skin) SaveHeadImage() error {
+func (s *Skin) SaveHeadImage() (string, error) {
 	workingDirectory, _ := os.Getwd()
-	f, err := os.Create(workingDirectory + "\\images\\head\\" + s.Username + ".png")
+	uuid := pseudo_uuid()
+	f, err := os.Create(workingDirectory + "\\images\\" + uuid + ".png")
 
 	if err != nil {
 		log.Fatal(err)
@@ -101,7 +105,7 @@ func (s *Skin) SaveHeadImage() error {
 
 	err = w.Flush()
 
-	return err
+	return uuid, err
 }
 
 func (s *Skin) FullBytes() ([]byte, error) {
@@ -136,4 +140,18 @@ func (s *Skin) HeadBytes() ([]byte, error) {
 	base64Image := buf.Bytes()
 
 	return base64Image, err
+}
+
+func pseudo_uuid() (uuid string) {
+
+	b := make([]byte, 16)
+	_, err := rand.Read(b)
+	if err != nil {
+		fmt.Println("Error: ", err)
+		return
+	}
+
+	uuid = fmt.Sprintf("%X-%X-%X-%X-%X", b[0:4], b[4:6], b[6:8], b[8:10], b[10:])
+
+	return
 }

@@ -17,8 +17,7 @@ func Database() *mongo.Database {
 
 func InitFs() error {
 	workingDirectory, _ := os.Getwd()
-	err := os.MkdirAll(workingDirectory+"/images/full", os.ModeDir)
-	err = os.MkdirAll(workingDirectory+"/images/head", os.ModeDir)
+	err := os.MkdirAll(workingDirectory+"\\images\\", os.ModeDir)
 
 	return err
 }

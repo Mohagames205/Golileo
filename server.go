@@ -58,9 +58,6 @@ func main() {
 
 		_, err := skinCollection.UpdateOne(context.TODO(), filter, update, opts)
 
-		err = payload.SaveFullImage()
-		err = payload.SaveHeadImage()
-
 		if err != nil {
 			log.Println(err)
 		}
@@ -93,8 +90,9 @@ func main() {
 
 		skinStruct := skin.S(skinResult["username"].(string), skinResult["skinstring"].(string))
 
-		workingDir, _ := os.Getwd()
-		return ctx.SendFile(workingDir + "\\images\\head\\" + skinStruct.Username + ".png")
+		uuid, err := skinStruct.SaveHeadImage()
+
+		return ctx.JSON(fiber.Map{"url": "/cdn/skinImage/" + uuid})
 	})
 
 	app.Get("/api/skin/:username/img/full", func(ctx *fiber.Ctx) error {
@@ -109,9 +107,16 @@ func main() {
 
 		skinStruct := skin.S(skinResult["username"].(string), skinResult["skinstring"].(string))
 
-		workingDir, _ := os.Getwd()
-		return ctx.SendFile(workingDir + "\\images\\full\\" + skinStruct.Username + ".png")
+		uuid, err := skinStruct.SaveFullImage()
+
+		return ctx.JSON(fiber.Map{"url": "/cdn/skinImage/" + uuid})
 	})
 
-	log.Fatal(app.Listen(":3000"))
+	app.Get("/cdn/skinImage/:uuid", func(ctx *fiber.Ctx) error {
+		workingDir, _ := os.Getwd()
+		uuid := ctx.Params("uuid")
+		return ctx.SendFile(workingDir + "\\images\\" + uuid + ".png")
+	})
+
+	log.Fatal(app.Listen("0.0.0.0:6969"))
 }
