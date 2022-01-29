@@ -118,5 +118,5 @@ func main() {
 		return ctx.SendFile(workingDir + "\\images\\" + uuid + ".png")
 	})
 
-	log.Fatal(app.Listen("0.0.0.0:6969"))
+	log.Fatal(app.Listen(":3000"))
 }
