@@ -10,7 +10,9 @@ services:
       - .:/home/go/app
     networks:
       - app-network
-    command: ./server
+    command: /home/go/app/server
+    links:
+      - mongo:mongo
   mongo:
     image: mongo
     restart: always
