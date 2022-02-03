@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Golileo Skindex</title>
+    <script defer>
+        function escapeHtml(text) {
+            var map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+
+            return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+        }
+
+        document.addEventListener("submit", function (event) {
+            event.preventDefault()
+            let username = escapeHtml(document.getElementById("username").value)
+            let mode = document.querySelector('input[name="mode"]:checked').value;
+            fetch(`api/skin/${username}/img/${mode}`)
+                .then(response => response.json())
+                .then(function (data) {
+                    let url = data.url
+                    document.getElementById("searchresult").innerHTML = `<img alt='Minecraft skin of ${username}' src='${url}'>`
+                })
+        })
+
+    </script>
+</head>
+<style>
+
+    @import url('https://fonts.googleapis.com/css2?family=Quicksand&display=swap');
+
+    body {
+        margin: 3.5rem;
+        background-color: beige;
+        font-family: 'Quicksand', sans-serif;
+    }
+
+    p {
+        font-size: 20px;
+    }
+
+    li {
+        font-size: 20px;
+    }
+
+    .warning {
+        margin-top: 60px;
+        padding: 20px;
+        background-color: rgba(255, 0, 0, 0.5);
+        border: #d92020 solid;
+        border-radius: 12px;
+
+    }
+
+    input {
+        padding: 10px;
+        border: 1px solid black;
+        border-radius: 5px;
+    }
+
+    button {
+        padding: 9px 12px 9px 12px;
+    }
+
+    img {
+        padding: 20px;
+        height: 512px;
+        width: 512px;
+        image-rendering: pixelated;
+    }
+</style>
+
+<body>
+<div class="warning">
+    <b>BETA:</b> De website is nog in ontwikkeling en zal dus waarschijnlijk nog bugs bevatten.
+</div>
+
+<h1>Golileo Skindex</h1>
+<p>Welkom op Golileo Skindex. Hier kun je zoeken naar de skins van spelers. </p>
+<form>
+    <input id="username" name="username" placeholder="Steve" type="text"/>
+
+    <button>Zoeken</button><br>
+    <br>
+    <input type="radio" id="full" name="mode" value="full"
+           checked>
+    <label for="full">Full</label>
+
+    <input type="radio" id="head" name="mode" value="head">
+    <label for="head">Head</label>
+
+</form>
+<div id="searchresult">
+
+
+</div>
+
+
+</body>
+</html>
