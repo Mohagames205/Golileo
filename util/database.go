@@ -26,7 +26,7 @@ func InitDatabase() {
 	/*
 	   Connect to the cluster
 	*/
-	client, err := mongo.NewClient(options.Client().ApplyURI("mongodb://mongo:27017"))
+	client, err := mongo.NewClient(options.Client().ApplyURI("mongodb://" + os.Getenv("DBHOST") + ":" + os.Getenv("DBPORT")))
 
 	if err != nil {
 		log.Fatal(err)

@@ -5,6 +5,8 @@ import (
 	"github.com/Mohagames205/Golileo/skin"
 	"github.com/Mohagames205/Golileo/util"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/basicauth"
+	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
@@ -16,13 +18,16 @@ func main() {
 		AppName: "Golileo",
 	})
 
-	/*
-		app.Use(basicauth.New(basicauth.Config{
-			Users: map[string]string{
-				"admin": "123456",
-			},
-		}))
-	*/
+	_ = godotenv.Load()
+
+	app.Use(basicauth.New(basicauth.Config{
+		Users: map[string]string{
+			os.Getenv("USERNAME"): os.Getenv("PASSWORD"),
+		},
+		Unauthorized: func(c *fiber.Ctx) error {
+			return c.SendFile("./static/unauthorized.html")
+		},
+	}))
 
 	err := util.InitFs()
 	if err != nil {
@@ -31,7 +36,7 @@ func main() {
 	util.InitDatabase()
 
 	app.Get("/", func(c *fiber.Ctx) error {
-		return c.SendString("Welkom bij Golileo. Dit is de skin API die binnen GalactixPE wordt gebruikt. ")
+		return c.SendString("Welkom bij Golileo. Gelieve de documentatie over het gebruik van Golileo te lezen.")
 	})
 
 	app.Post("/api/skin", func(ctx *fiber.Ctx) error {
