@@ -20,14 +20,16 @@ func main() {
 
 	_ = godotenv.Load()
 
-	app.Use(basicauth.New(basicauth.Config{
-		Users: map[string]string{
-			os.Getenv("USERNAME"): os.Getenv("PASSWORD"),
-		},
-		Unauthorized: func(c *fiber.Ctx) error {
-			return c.SendFile("./static/unauthorized.html")
-		},
-	}))
+	if os.Getenv("AUTH") == "true" {
+		app.Use(basicauth.New(basicauth.Config{
+			Users: map[string]string{
+				os.Getenv("USERNAME"): os.Getenv("PASSWORD"),
+			},
+			Unauthorized: func(c *fiber.Ctx) error {
+				return c.SendFile("./static/unauthorized.html")
+			},
+		}))
+	}
 
 	err := util.InitFs()
 	if err != nil {
@@ -36,7 +38,7 @@ func main() {
 	util.InitDatabase()
 
 	app.Get("/", func(c *fiber.Ctx) error {
-		return c.SendString("Welkom bij Golileo. Gelieve de documentatie over het gebruik van Golileo te lezen.")
+		return c.SendFile("./static/skindex.html")
 	})
 
 	app.Post("/api/skin", func(ctx *fiber.Ctx) error {
