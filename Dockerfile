@@ -1,5 +1,5 @@
 FROM debian:8.8
 
-WORKDIR /home/app/go
+WORKDIR /home/go/app
 
-CMD [".\server"]
+CMD ["./server"]

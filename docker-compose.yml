@@ -13,7 +13,6 @@ services:
       - .:/home/go/app
     networks:
       - app-network
-    command: /home/go/app/server
     links:
       - mongo:mongo
   mongo:
