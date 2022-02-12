@@ -102,7 +102,7 @@ func main() {
 
 		uuid, err := skinStruct.SaveHeadImage()
 
-		return ctx.JSON(fiber.Map{"url": "/cdn/skinImage/" + uuid})
+		return ctx.JSON(fiber.Map{"url": "/cdn/skinImage/" + skinStruct.Username + "-" + uuid})
 	})
 
 	app.Get("/api/skin/:username/img/full", func(ctx *fiber.Ctx) error {
@@ -119,7 +119,7 @@ func main() {
 
 		uuid, err := skinStruct.SaveFullImage()
 
-		return ctx.JSON(fiber.Map{"url": "/cdn/skinImage/" + uuid})
+		return ctx.JSON(fiber.Map{"url": "/cdn/skinImage/" + skinStruct.Username + "-" + uuid})
 	})
 
 	app.Get("/cdn/skinImage/:uuid", func(ctx *fiber.Ctx) error {
