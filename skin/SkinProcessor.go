@@ -29,7 +29,7 @@ var Heights = map[int]int{
 
 var HeadPosWidthMap = map[int][]int{
 	64:  {8, 16},
-	128: {40, 56},
+	128: {8, 32},
 }
 
 type Skin struct {
@@ -157,8 +157,6 @@ func (s *Skin) HeadBytes() ([]byte, error) {
 	maxY := HeadPosWidthMap[s.Dimensions[0]][1]
 
 	headImage := imageStruct.SubImage(image.Rectangle{
-		// 7, 8 en 16, 15
-
 		Min: image.Pt(minX, minY),
 		Max: image.Pt(maxX, maxY),
 	})
