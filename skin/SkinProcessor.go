@@ -25,15 +25,29 @@ var Heights = map[int]int{
 	128 * 128 * 4: 128,
 }
 
+// sec head BEGIN = 40, 8
+
+var HeadPosWidthMap = map[int][]int{
+	64:  {8, 16},
+	128: {40, 56},
+}
+
 type Skin struct {
-	Username string
-	Skin     string
+	Username   string
+	Skin       string
+	Dimensions []int
 }
 
 func S(username string, skin string) *Skin {
+	data, _ := base64.StdEncoding.DecodeString(skin)
+	skinSize := len(string(data))
+	skinHeight := Heights[skinSize]
+	skinWidth := Widths[skinSize]
+
 	return &Skin{
-		Skin:     skin,
-		Username: username,
+		Skin:       skin,
+		Username:   username,
+		Dimensions: []int{skinWidth, skinHeight},
 	}
 }
 
@@ -69,7 +83,7 @@ func (s *Skin) ConvertToImage() (*image.RGBA, error) {
 func (s *Skin) SaveFullImage() (string, error) {
 	workingDirectory, _ := os.Getwd()
 	uuid := pseudo_uuid()
-	f, err := os.Create(workingDirectory + "/images/" + uuid + ".png")
+	f, err := os.Create(workingDirectory + "/images/" + s.Username + uuid + ".png")
 
 	defer f.Close()
 
@@ -85,7 +99,7 @@ func (s *Skin) SaveFullImage() (string, error) {
 func (s *Skin) SaveHeadImage() (string, error) {
 	workingDirectory, _ := os.Getwd()
 	uuid := pseudo_uuid()
-	f, err := os.Create(workingDirectory + "/images/" + uuid + ".png")
+	f, err := os.Create(workingDirectory + "/images/" + s.Username + uuid + ".png")
 
 	if err != nil {
 		log.Fatal(err)
@@ -95,10 +109,17 @@ func (s *Skin) SaveHeadImage() (string, error) {
 
 	w := bufio.NewWriter(f)
 	skinImage, _ := s.ConvertToImage()
+
+	minX := HeadPosWidthMap[s.Dimensions[0]][0]
+	minY := HeadPosWidthMap[s.Dimensions[0]][0]
+
+	maxX := HeadPosWidthMap[s.Dimensions[0]][1]
+	maxY := HeadPosWidthMap[s.Dimensions[0]][1]
+
 	headImage := skinImage.SubImage(image.Rectangle{
 		// 7, 8 en 16, 15
-		Min: image.Pt(8, 8),
-		Max: image.Pt(16, 16),
+		Min: image.Pt(minX, minY),
+		Max: image.Pt(maxX, maxY),
 	})
 
 	err = png.Encode(w, headImage)
@@ -129,10 +150,17 @@ func (s *Skin) HeadBytes() ([]byte, error) {
 		skinWidth := SkinWidths[skinSize]
 	*/
 
+	minX := HeadPosWidthMap[s.Dimensions[0]][0]
+	minY := HeadPosWidthMap[s.Dimensions[0]][0]
+
+	maxX := HeadPosWidthMap[s.Dimensions[0]][1]
+	maxY := HeadPosWidthMap[s.Dimensions[0]][1]
+
 	headImage := imageStruct.SubImage(image.Rectangle{
 		// 7, 8 en 16, 15
-		Min: image.Pt(8, 8),
-		Max: image.Pt(16, 16),
+
+		Min: image.Pt(minX, minY),
+		Max: image.Pt(maxX, maxY),
 	})
 
 	buf := new(bytes.Buffer)
