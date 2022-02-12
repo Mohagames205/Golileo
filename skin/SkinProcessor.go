@@ -26,13 +26,6 @@ var Heights = map[int]int{
 	128 * 128 * 4: 128,
 }
 
-// sec head BEGIN = 40, 8
-
-var HeadPosWidthMap = map[int][]int{
-	64:  {8, 16},
-	128: {16, 32},
-}
-
 type Dimension struct {
 	Width  int
 	Height int
@@ -119,23 +112,35 @@ func (s *Skin) SaveHeadImage() (string, error) {
 	minP := s.Dimensions.Width / 8
 	maxP := s.Dimensions.Width / 4
 
+	headHeight := s.Dimensions.Width / 8
+
+	overlayBeginPointX := int(float32(s.Dimensions.Width) * (5.0 / 8.0))
+	overlayEndPointX := overlayBeginPointX + headHeight
+
 	headImage := skinImage.SubImage(image.Rectangle{
-		// 7, 8 en 16, 15
 		Min: image.Pt(minP, minP),
 		Max: image.Pt(maxP, maxP),
 	})
 
 	overlayImage := skinImage.SubImage(image.Rectangle{
-		Min: image.Pt(40, 8),
-		Max: image.Pt(48, 16),
+		Min: image.Pt(overlayBeginPointX, minP),
+		Max: image.Pt(overlayEndPointX, minP+headHeight),
 	})
 
-	for y := 0; y < s.Dimensions.Height; y++ {
-		for x := 0; x < s.Dimensions.Width; x++ {
+	py := minP
+	for y := minP; y < minP+headHeight; y++ {
+		px := minP
+		for x := overlayBeginPointX; x < overlayEndPointX; x++ {
 			overlayColor := overlayImage.At(x, y)
-
-			headImage.(draw.Image).Set(x, y, overlayColor)
+			_, _, _, a := overlayColor.RGBA()
+			if a == 0 {
+				px++
+				continue
+			}
+			headImage.(draw.Image).Set(px, py, overlayColor)
+			px++
 		}
+		py++
 	}
 
 	err = png.Encode(w, headImage)
