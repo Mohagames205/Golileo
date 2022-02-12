@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"image"
 	"image/color"
+	"image/draw"
 	"image/png"
 	"log"
 	"os"
@@ -32,10 +33,15 @@ var HeadPosWidthMap = map[int][]int{
 	128: {16, 32},
 }
 
+type Dimension struct {
+	Width  int
+	Height int
+}
+
 type Skin struct {
 	Username   string
 	Skin       string
-	Dimensions []int
+	Dimensions Dimension
 }
 
 func S(username string, skin string) *Skin {
@@ -47,7 +53,7 @@ func S(username string, skin string) *Skin {
 	return &Skin{
 		Skin:       skin,
 		Username:   username,
-		Dimensions: []int{skinWidth, skinHeight},
+		Dimensions: Dimension{skinWidth, skinHeight},
 	}
 }
 
@@ -110,14 +116,27 @@ func (s *Skin) SaveHeadImage() (string, error) {
 	w := bufio.NewWriter(f)
 	skinImage, _ := s.ConvertToImage()
 
-	minP := s.Dimensions[0] / 8
-	maxP := s.Dimensions[0] / 4
+	minP := s.Dimensions.Width / 8
+	maxP := s.Dimensions.Width / 4
 
 	headImage := skinImage.SubImage(image.Rectangle{
 		// 7, 8 en 16, 15
 		Min: image.Pt(minP, minP),
 		Max: image.Pt(maxP, maxP),
 	})
+
+	overlayImage := skinImage.SubImage(image.Rectangle{
+		Min: image.Pt(40, 8),
+		Max: image.Pt(48, 16),
+	})
+
+	for y := 0; y < s.Dimensions.Height; y++ {
+		for x := 0; x < s.Dimensions.Width; x++ {
+			overlayColor := overlayImage.At(x, y)
+
+			headImage.(draw.Image).Set(x, y, overlayColor)
+		}
+	}
 
 	err = png.Encode(w, headImage)
 
@@ -147,8 +166,8 @@ func (s *Skin) HeadBytes() ([]byte, error) {
 		skinWidth := SkinWidths[skinSize]
 	*/
 
-	minP := s.Dimensions[0] / 8
-	maxP := s.Dimensions[0] / 4
+	minP := s.Dimensions.Width / 8
+	maxP := s.Dimensions.Width / 4
 
 	headImage := imageStruct.SubImage(image.Rectangle{
 		Min: image.Pt(minP, minP),
