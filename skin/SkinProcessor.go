@@ -29,7 +29,7 @@ var Heights = map[int]int{
 
 var HeadPosWidthMap = map[int][]int{
 	64:  {8, 16},
-	128: {8, 32},
+	128: {16, 32},
 }
 
 type Skin struct {
@@ -110,16 +110,13 @@ func (s *Skin) SaveHeadImage() (string, error) {
 	w := bufio.NewWriter(f)
 	skinImage, _ := s.ConvertToImage()
 
-	minX := HeadPosWidthMap[s.Dimensions[0]][0]
-	minY := HeadPosWidthMap[s.Dimensions[0]][0]
-
-	maxX := HeadPosWidthMap[s.Dimensions[0]][1]
-	maxY := HeadPosWidthMap[s.Dimensions[0]][1]
+	minP := s.Dimensions[0] / 8
+	maxP := s.Dimensions[0] / 4
 
 	headImage := skinImage.SubImage(image.Rectangle{
 		// 7, 8 en 16, 15
-		Min: image.Pt(minX, minY),
-		Max: image.Pt(maxX, maxY),
+		Min: image.Pt(minP, minP),
+		Max: image.Pt(maxP, maxP),
 	})
 
 	err = png.Encode(w, headImage)
@@ -150,15 +147,12 @@ func (s *Skin) HeadBytes() ([]byte, error) {
 		skinWidth := SkinWidths[skinSize]
 	*/
 
-	minX := HeadPosWidthMap[s.Dimensions[0]][0]
-	minY := HeadPosWidthMap[s.Dimensions[0]][0]
-
-	maxX := HeadPosWidthMap[s.Dimensions[0]][1]
-	maxY := HeadPosWidthMap[s.Dimensions[0]][1]
+	minP := s.Dimensions[0] / 8
+	maxP := s.Dimensions[0] / 4
 
 	headImage := imageStruct.SubImage(image.Rectangle{
-		Min: image.Pt(minX, minY),
-		Max: image.Pt(maxX, maxY),
+		Min: image.Pt(minP, minP),
+		Max: image.Pt(maxP, maxP),
 	})
 
 	buf := new(bytes.Buffer)
