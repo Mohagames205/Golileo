@@ -6,6 +6,7 @@ import (
 	"github.com/Mohagames205/Golileo/util"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/basicauth"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -17,6 +18,8 @@ func main() {
 	app := fiber.New(fiber.Config{
 		AppName: "Golileo",
 	})
+
+	app.Use(cors.New())
 
 	_ = godotenv.Load()
 
