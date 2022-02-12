@@ -13,13 +13,13 @@ import (
 	"os"
 )
 
-var SkinWidths = map[int]int{
+var Widths = map[int]int{
 	64 * 32 * 4:   64,
 	64 * 64 * 4:   64,
 	128 * 128 * 4: 128,
 }
 
-var SkinHeights = map[int]int{
+var Heights = map[int]int{
 	64 * 32 * 4:   32,
 	64 * 64 * 4:   64,
 	128 * 128 * 4: 128,
@@ -42,8 +42,8 @@ func (s *Skin) ConvertToImage() (*image.RGBA, error) {
 	dataString := string(data)
 
 	skinSize := len(dataString)
-	skinHeight := SkinHeights[skinSize]
-	skinWidth := SkinWidths[skinSize]
+	skinHeight := Heights[skinSize]
+	skinWidth := Widths[skinSize]
 
 	alphaImage := image.NewRGBA(image.Rectangle{Min: image.Point{}, Max: image.Point{X: skinWidth, Y: skinHeight}})
 
