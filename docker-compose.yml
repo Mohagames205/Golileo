@@ -20,6 +20,8 @@ services:
     restart: always
     expose:
       - "27017"
+    volumes:
+      - ./dbdata:/data/db
     networks:
       - app-network
 
