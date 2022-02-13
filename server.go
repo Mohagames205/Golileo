@@ -40,10 +40,6 @@ func main() {
 		}))
 	}
 
-	err := util.InitFs()
-	if err != nil {
-		log.Fatal(err)
-	}
 	util.InitDatabase()
 
 	app.Get("/", func(c *fiber.Ctx) error {

@@ -15,13 +15,6 @@ func Database() *mongo.Database {
 	return Client.Database("galileo")
 }
 
-func InitFs() error {
-	workingDirectory, _ := os.Getwd()
-	err := os.MkdirAll(workingDirectory+"/images/", os.ModeDir)
-
-	return err
-}
-
 func InitDatabase() {
 	/*
 	   Connect to the cluster
