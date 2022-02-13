@@ -2,7 +2,7 @@
 # Copyright 2004-2022 Aspose Pty Ltd.
 # File created: 02/13/2022 15:51:10
 
-mtllib material.lib
+mtllib material.mtl
 
 #
 # object Steve
