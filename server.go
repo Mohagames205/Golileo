@@ -7,6 +7,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/basicauth"
 	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/template/html"
 	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -15,13 +16,18 @@ import (
 )
 
 func main() {
+	engine := html.New("./views", ".html")
+
 	app := fiber.New(fiber.Config{
 		AppName: "Golileo",
+		Views:   engine,
 	})
 
 	app.Use(cors.New())
 
 	_ = godotenv.Load()
+
+	app.Static("/cdn", "./public")
 
 	if os.Getenv("AUTH") == "true" {
 		app.Use(basicauth.New(basicauth.Config{
@@ -29,7 +35,7 @@ func main() {
 				os.Getenv("USERNAME"): os.Getenv("PASSWORD"),
 			},
 			Unauthorized: func(c *fiber.Ctx) error {
-				return c.SendFile("./static/unauthorized.html")
+				return c.Render("unauthorized", fiber.Map{})
 			},
 		}))
 	}
@@ -41,7 +47,7 @@ func main() {
 	util.InitDatabase()
 
 	app.Get("/", func(c *fiber.Ctx) error {
-		return c.SendFile("./static/skindex.html")
+		return c.Render("3dtesting", fiber.Map{})
 	})
 
 	app.Post("/api/skin", func(ctx *fiber.Ctx) error {
@@ -102,7 +108,7 @@ func main() {
 
 		uuid, err := skinStruct.SaveHeadImage()
 
-		return ctx.JSON(fiber.Map{"url": "/cdn/skinImage/" + skinStruct.Username + "-" + uuid})
+		return ctx.JSON(fiber.Map{"url": "/cdn/images/" + skinStruct.Username + "-" + uuid + ".png"})
 	})
 
 	app.Get("/api/skin/:username/img/full", func(ctx *fiber.Ctx) error {
@@ -119,13 +125,7 @@ func main() {
 
 		uuid, err := skinStruct.SaveFullImage()
 
-		return ctx.JSON(fiber.Map{"url": "/cdn/skinImage/" + skinStruct.Username + "-" + uuid})
-	})
-
-	app.Get("/cdn/skinImage/:uuid", func(ctx *fiber.Ctx) error {
-		workingDir, _ := os.Getwd()
-		uuid := ctx.Params("uuid")
-		return ctx.SendFile(workingDir + "/images/" + uuid + ".png")
+		return ctx.JSON(fiber.Map{"url": "/cdn/images/" + skinStruct.Username + "-" + uuid + ".png"})
 	})
 
 	log.Fatal(app.Listen(":3000"))
