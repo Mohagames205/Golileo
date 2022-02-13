@@ -1,0 +1,29 @@
+{
+  "name": "Galileo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "public/index.js",
+  "dependencies": {
+    "skinview3d": "^2.2.1",
+    "three": "^0.137.5",
+    "webpack": "^5.68.0",
+    "webpack-cli": "^4.9.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack",
+    "start": "npm run build && server.exe"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mohagames205/Golileo.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Mohagames205/Golileo/issues"
+  },
+  "homepage": "https://github.com/Mohagames205/Golileo#readme"
+}
