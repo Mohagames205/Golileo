@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Golileo Skindex</title>
+
+
+    <script type="module">
+
+        // Find the latest version by visiting https://cdn.skypack.dev/three.
+
+        import * as THREE from 'https://cdn.skypack.dev/three@v0.137.5';
+        //import { OrbitControls } from 'https://cdn.skypack.dev/three@v0.137.5/examples/jsm/controls/OrbitControls.js'
+
+        const scene = new THREE.Scene();
+
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+
+        const renderer = new THREE.WebGLRenderer({
+            canvas: document.querySelector("#skindisplay"),
+        });
+
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        camera.position.setZ(30);
+
+        renderer.render(scene, camera);
+
+        const geometry = new THREE.TorusGeometry(10, 3, 16, 100);
+        const material = new THREE.MeshBasicMaterial({ color: 0xFF6347});
+        const torus = new THREE.Mesh(geometry, material);
+
+        const headGeometry = new THREE.BoxGeometry(8, 8, 8)
+        const head = new THREE.Mesh(headGeometry, material)
+
+
+        loader.load(
+            '/model/steve.obj',
+            function (object){
+                scene.add(object)
+            }
+        )
+
+        scene.add(head)
+        scene.add(torus)
+
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            torus.rotation.x += 0.01
+
+            renderer.render(scene, camera)
+        }
+
+        animate()
+
+
+    </script>
+
+
+
+</head>
+<style>
+
+    @import url('https://fonts.googleapis.com/css2?family=Quicksand&display=swap');
+
+    canvas {
+        position: fixed;
+        top: 0;
+        left: 0;
+    }
+</style>
+
+<body>
+
+<canvas id="skindisplay">
+
+</canvas>
+
+
+</body>
+</html>
