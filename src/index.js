@@ -8,10 +8,6 @@ let skinViewer = new skinview3d.SkinViewer({
     height: 800,
 });
 
-// Set the background color
-skinViewer.background = 0x5a76f3;
-
-
 // Change camera FOV
 skinViewer.fov = 70;
 
