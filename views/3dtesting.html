@@ -9,26 +9,37 @@
     <link href="/cdn/css/style.css" rel="stylesheet">
     <link rel="icon" type="image/x-icon" href="/cdn/staticimg/favicon.ico" />
 </head>
-<body>
+<body class="dark">
 <div class="warning">
-    <b>BETA:</b> De website is nog in ontwikkeling en zal dus waarschijnlijk nog bugs bevatten.
+    De website is nog in ontwikkeling en zal dus waarschijnlijk nog bugs bevatten.
+</div>
+<button id="theme-toggle">
+    Light mode ☀️
+</button>
+
+<div class="banner">
+    <h1>Golileo Skindex<img src="/cdn/staticimg/galileo.png"></h1>
+    <p>Welkom op Golileo Skindex. Hier kun je zoeken naar de skins van spelers. </p>
+    <hr>
 </div>
 
-<h1>Golileo Skindex</h1>
-<p>Welkom op Golileo Skindex. Hier kun je zoeken naar de skins van spelers. </p>
-<form>
-    <input id="username" name="username" placeholder="Steve" type="text"/>
+<div class="searchbox">
+    <form>
+        <input id="username" name="username" placeholder="Steve" type="text" required/>
 
-    <button>Zoeken</button><br>
-    <br>
-    <input type="radio" id="full" name="mode" value="full"
-           checked>
-    <label for="full">Full</label>
+        <button>Zoeken</button><br>
+        <br>
+        <input type="radio" id="full" name="mode" value="full"
+               checked>
+        <label for="full">Full</label>
 
-    <input type="radio" id="head" name="mode" value="head">
-    <label for="head">Head</label>
+        <input type="radio" id="head" name="mode" value="head">
+        <label for="head">Head</label>
 
-</form>
+    </form>
+</div>
+
+
 
 <div class="results">
     <div id="searchresult">
