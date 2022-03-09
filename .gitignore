@@ -2,3 +2,4 @@
 public/images/*
 .env
 node_modules
+server.exe
