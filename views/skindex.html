@@ -22,12 +22,8 @@
             event.preventDefault()
             let username = escapeHtml(document.getElementById("username").value)
             let mode = document.querySelector('input[name="mode"]:checked').value;
-            fetch(`api/skin/${username}/img/${mode}`)
-                .then(response => response.json())
-                .then(function (data) {
-                    let url = data.url
-                    document.getElementById("searchresult").innerHTML = `<img alt='Minecraft skin of ${username}' src='${url}'>`
-                })
+            let url = `api/${username}/img/${mode}`
+            document.getElementById("searchresult").innerHTML = `<img alt='Minecraft skin of ${username}' src='${url}'>`
         })
 
     </script>

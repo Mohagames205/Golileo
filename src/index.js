@@ -41,16 +41,13 @@ document.addEventListener("submit", function (event) {
     event.preventDefault()
     let username = escapeHtml(document.getElementById("username").value)
     let mode = document.querySelector('input[name="mode"]:checked').value;
-    fetch(`api/skin/${username}/img/${mode}`)
-        .then(response => response.json())
-        .then(function (data) {
-            let url = data.url;
-            if(mode === "full") {
-                canvas.style.display = "block";
-                skinViewer.loadSkin(url);
-            } else {
-                canvas.style.display = "none";
-            }
-            document.getElementById("searchresult").innerHTML = `<img alt='Minecraft skin of ${username}' src='${url}'>`
-        })
+    let url = `api/${username}/img/${mode}`
+
+    if(mode === "full") {
+        canvas.style.display = "block";
+        skinViewer.loadSkin(url);
+    } else {
+        canvas.style.display = "none";
+    }
+    document.getElementById("searchresult").innerHTML = `<img alt='Minecraft skin of ${username}' src='${url}'>`
 })
