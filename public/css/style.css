@@ -1,9 +1,55 @@
 @import url('https://fonts.googleapis.com/css2?family=Quicksand&display=swap');
 
+:root {
+    --gray-1: rgb(197, 191, 191);
+    --gray-2: rgb(157, 150, 150);
+    --gray-3: rgba(255, 255, 255, 0.10);
+
+    --red-1: rgba(255, 0, 0, 0.5);
+    --red-2: #d92020;
+
+    --dark-gray-1: rgb(80, 80, 80);
+    --dark-gray-2: rgb(50, 50, 50);
+
+    --opaque-gray: rgba(0, 0, 0, 0.1);
+
+    --glurple: #5e09d2;
+}
+
+.light {
+    --bg: #eeeeee;
+    --body-font-color: black;
+
+    --border: var(--gray-3);
+    --button-background: var(--glurple);
+    --button-font-color: white;
+
+    --input-bg-color: var(--opaque-gray);
+    --input-border-color: var(--gray-2);
+    --input-font-color: var(--dark-gray-2);
+}
+
+.dark {
+    --bg: #121212;
+    --body-font-color: white;
+
+    --border: var(--gray-3);
+    --button-background: var(--gray-3);
+    --button-font-color: var(--gray-2);
+
+    --input-bg-color: var(--gray-3);
+    --input-border-color: var(--gray-3);
+    --input-font-color: var(--gray-1);
+}
+
 body {
+    color: var(--body-font-color);
     margin: 3.5rem;
-    background-color: beige;
+    margin-top: 30px;
+    background-color: var(--bg);
     font-family: 'Quicksand', sans-serif;
+
+    transition: background 500ms ease-in-out, color 1000ms ease-in-out;
 }
 
 p {
@@ -14,23 +60,55 @@ li {
     font-size: 20px;
 }
 
-.warning {
-    margin-top: 60px;
-    padding: 20px;
-    background-color: rgba(255, 0, 0, 0.5);
-    border: #d92020 solid;
-    border-radius: 12px;
-
+.banner {
+    text-align: center;
 }
 
-input {
-    padding: 10px;
-    border: 1px solid black;
+h1 {
+    font-size: 45px;
+}
+
+.banner img{
+    image-rendering: unset;
+    padding: 0 0 0 21px;
+    height: auto;
+    width: 53px;
+}
+
+.warning {
+    padding: 19px;
+    margin-bottom: 3%;
+    background-color: var(--red-1);
+    border: var(--red-2) solid 1px;
+    border-radius: 12px;
+}
+
+input[type=text] {
+    margin-top: 20px;
+    background-color: var(--input-bg-color);
+    padding: 15px 10px 15px 10px;
+    border: 1px solid var(--input-border-color);
+    color: var(--input-font-color);
     border-radius: 5px;
+    width: 50vw;
+}
+
+input:focus,button:focus {
+    outline-color: var(--glurple);
 }
 
 button {
-    padding: 9px 12px 9px 12px;
+    cursor: pointer;
+    padding: 13px 15px 13px 15px;
+    background-color: var(--button-background);
+    border: 1px solid var(--border);
+    color: var(--button-font-color);
+    border-radius: 5px;
+}
+
+hr {
+    width: 30%;
+    border-color: var(--border);
 }
 
 img {
@@ -45,6 +123,10 @@ img {
     display: flex;
     flex-direction: row;
     justify-content: space-evenly;
+}
+
+.searchbox {
+    text-align: center;
 }
 
 /* Responsive layout - makes a one column layout instead of a two-column layout */

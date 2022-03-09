@@ -36,6 +36,19 @@ function escapeHtml(text) {
     return text.replace(/[&<>"']/g, function(m) { return map[m]; });
 }
 
+const themeToggle = document.getElementById('theme-toggle');
+const body = document.body;
+
+themeToggle.onclick = () => {
+    if(body.classList.contains('light')){
+        body.classList.replace('light', 'dark');
+        themeToggle.innerText = "Light mode ☀️"
+    } else if(body.classList.contains('dark')){
+        body.classList.replace('dark', 'light');
+        themeToggle.innerText = "Dark mode 🌜"
+    }
+}
+
 document.addEventListener("submit", function (event) {
     event.preventDefault()
     let username = escapeHtml(document.getElementById("username").value)
