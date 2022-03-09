@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"github.com/Mohagames205/Golileo/skin"
 	"github.com/Mohagames205/Golileo/util"
 	"github.com/gofiber/fiber/v2"
@@ -22,6 +21,10 @@ func main() {
 	app := fiber.New(fiber.Config{
 		AppName: "Golileo",
 		Views:   engine,
+	})
+
+	no_cache_group := app.Group("/api/:username/img/no-cache", func(ctx *fiber.Ctx) error {
+		return ctx.Next()
 	})
 
 	app.Use(cors.New())
@@ -69,8 +72,14 @@ func main() {
 			{Key: "skinstring", Value: payload.Skin}},
 		}}
 
-		payload.SaveFullImage("full")
-		payload.SaveHeadImage("head")
+		/*
+		 * We create the skin struct again using the special S function because the function also calculates the skinsize for us
+		 * This is needed for the skinhead, without the calculation the head image saving will not work
+		 */
+		skinStruct := skin.S(payload.Username, payload.Skin)
+
+		skinStruct.SaveFullImage("full")
+		skinStruct.SaveHeadImage("head")
 
 		_, err := skinCollection.UpdateOne(context.TODO(), filter, update, opts)
 
@@ -81,7 +90,7 @@ func main() {
 		return ctx.SendString("Skin has been inserted into the util")
 	})
 
-	app.Get("/api/skin/:username/raw", func(ctx *fiber.Ctx) error {
+	app.Get("/api/:username/raw", func(ctx *fiber.Ctx) error {
 
 		skinCollection := util.Database().Collection("skins")
 
@@ -94,7 +103,7 @@ func main() {
 		return ctx.JSON(fiber.Map{"username": ctx.Params("username"), "skinstring": skinResult["skinstring"]})
 	})
 
-	app.Get("/api/skin/:username/img/no-cache/head", func(ctx *fiber.Ctx) error {
+	no_cache_group.Get("/head", func(ctx *fiber.Ctx) error {
 
 		skinCollection := util.Database().Collection("skins")
 
@@ -112,7 +121,7 @@ func main() {
 		return ctx.JSON(fiber.Map{"url": "/cdn/images/" + skinStruct.Username + "-" + uuid + ".png"})
 	})
 
-	app.Get("/api/skin/:username/img/no-cache/full", func(ctx *fiber.Ctx) error {
+	no_cache_group.Get("/full", func(ctx *fiber.Ctx) error {
 
 		skinCollection := util.Database().Collection("skins")
 
@@ -130,7 +139,7 @@ func main() {
 		return ctx.JSON(fiber.Map{"url": "/cdn/images/" + skinStruct.Username + "-" + uuid + ".png"})
 	})
 
-	app.Get("/api/skin/:username/img/full", func(ctx *fiber.Ctx) error {
+	app.Get("/api/:username/img/full", func(ctx *fiber.Ctx) error {
 		skinCollection := util.Database().Collection("skins")
 
 		var skinResult bson.M
@@ -145,7 +154,7 @@ func main() {
 		return ctx.SendFile(workingDirectory + "/public/images/" + skinStruct.Username + "-full.png")
 	})
 
-	app.Get("/api/skin/:username/img/head", func(ctx *fiber.Ctx) error {
+	app.Get("/api/:username/img/head", func(ctx *fiber.Ctx) error {
 		skinCollection := util.Database().Collection("skins")
 
 		var skinResult bson.M
@@ -157,7 +166,6 @@ func main() {
 		skinStruct := skin.S(skinResult["username"].(string), skinResult["skinstring"].(string))
 
 		workingDirectory, _ := os.Getwd()
-		fmt.Println(workingDirectory + "/public/images/" + skinStruct.Username + "-head.png")
 		return ctx.SendFile(workingDirectory + "/public/images/" + skinStruct.Username + "-head.png")
 	})
 
