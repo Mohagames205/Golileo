@@ -79,10 +79,9 @@ func (s *Skin) ConvertToImage() (*image.RGBA, error) {
 	return alphaImage, err
 }
 
-func (s *Skin) SaveFullImage() (string, error) {
+func (s *Skin) SaveFullImage(name string) (string, error) {
 	workingDirectory, _ := os.Getwd()
-	uuid := pseudo_uuid()
-	f, err := os.Create(workingDirectory + "/public/images/" + s.Username + "-" + uuid + ".png")
+	f, err := os.Create(workingDirectory + "/public/images/" + s.Username + "-" + name + ".png")
 
 	defer f.Close()
 
@@ -92,19 +91,16 @@ func (s *Skin) SaveFullImage() (string, error) {
 	err = png.Encode(w, skinImage)
 	err = w.Flush()
 
-	return uuid, err
+	return workingDirectory + "/public/images/" + s.Username + "-" + name + ".png", err
 }
 
-func (s *Skin) SaveHeadImage() (string, error) {
+func (s *Skin) SaveHeadImage(name string) (string, error) {
 	workingDirectory, _ := os.Getwd()
-	uuid := pseudo_uuid()
-	f, err := os.Create(workingDirectory + "/public/images/" + s.Username + "-" + uuid + ".png")
+	f, err := os.Create(workingDirectory + "/public/images/" + s.Username + "-" + name + ".png")
 
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	defer f.Close()
 
 	w := bufio.NewWriter(f)
 	skinImage, _ := s.ConvertToImage()
@@ -147,7 +143,9 @@ func (s *Skin) SaveHeadImage() (string, error) {
 
 	err = w.Flush()
 
-	return uuid, err
+	f.Close()
+
+	return workingDirectory + "/public/images/" + s.Username + "-" + name + ".png", err
 }
 
 func (s *Skin) FullBytes() ([]byte, error) {
@@ -186,7 +184,7 @@ func (s *Skin) HeadBytes() ([]byte, error) {
 	return base64Image, err
 }
 
-func pseudo_uuid() (uuid string) {
+func PseudoUuid() (uuid string) {
 
 	b := make([]byte, 16)
 	_, err := rand.Read(b)

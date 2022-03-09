@@ -1,4 +1,5 @@
 const skinview3d = require("skinview3d");
+const {Vector3} = require("three");
 
 const canvas = document.getElementById("skindisplay");
 
@@ -6,6 +7,7 @@ let skinViewer = new skinview3d.SkinViewer({
     canvas: canvas,
     width: 600,
     height: 800,
+    preserveDrawingBuffer: true
 });
 
 // Change camera FOV
@@ -50,6 +52,5 @@ document.addEventListener("submit", function (event) {
                 canvas.style.display = "none";
             }
             document.getElementById("searchresult").innerHTML = `<img alt='Minecraft skin of ${username}' src='${url}'>`
-
         })
 })
