@@ -1,0 +1,60 @@
+@import url('https://fonts.googleapis.com/css2?family=Quicksand&display=swap');
+
+body {
+    margin: 3.5rem;
+    background-color: beige;
+    font-family: 'Quicksand', sans-serif;
+}
+
+p {
+    font-size: 20px;
+}
+
+li {
+    font-size: 20px;
+}
+
+.warning {
+    margin-top: 60px;
+    padding: 20px;
+    background-color: rgba(255, 0, 0, 0.5);
+    border: #d92020 solid;
+    border-radius: 12px;
+
+}
+
+input {
+    padding: 10px;
+    border: 1px solid black;
+    border-radius: 5px;
+}
+
+button {
+    padding: 9px 12px 9px 12px;
+}
+
+img {
+    padding: 20px;
+    height: 512px;
+    width: 512px;
+    image-rendering: pixelated;
+}
+
+
+.results {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+/* Responsive layout - makes a one column layout instead of a two-column layout */
+@media (max-width: 800px) {
+    .results {
+        flex-direction: column;
+    }
+
+    img {
+        width: 75vw;
+        height: auto;
+    }
+}
