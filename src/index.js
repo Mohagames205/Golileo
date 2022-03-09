@@ -1,5 +1,4 @@
 const skinview3d = require("skinview3d");
-const {Vector3} = require("three");
 
 const canvas = document.getElementById("skindisplay");
 
