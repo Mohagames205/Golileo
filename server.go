@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"github.com/Mohagames205/Golileo/skin"
 	"github.com/Mohagames205/Golileo/util"
 	"github.com/gofiber/fiber/v2"
@@ -21,10 +22,6 @@ func main() {
 	app := fiber.New(fiber.Config{
 		AppName: "Golileo",
 		Views:   engine,
-	})
-
-	no_cache_group := app.Group("/api/:username/img/no-cache", func(ctx *fiber.Ctx) error {
-		return ctx.Next()
 	})
 
 	app.Use(cors.New())
@@ -103,42 +100,6 @@ func main() {
 		return ctx.JSON(fiber.Map{"username": ctx.Params("username"), "skinstring": skinResult["skinstring"]})
 	})
 
-	no_cache_group.Get("/head", func(ctx *fiber.Ctx) error {
-
-		skinCollection := util.Database().Collection("skins")
-
-		var skinResult bson.M
-		err := skinCollection.FindOne(context.TODO(), bson.M{"username": ctx.Params("username")}).Decode(&skinResult)
-		if err != nil {
-			return fiber.NewError(404, "Username not found")
-		}
-
-		skinStruct := skin.S(skinResult["username"].(string), skinResult["skinstring"].(string))
-
-		uuid := skin.PseudoUuid()
-		skinStruct.SaveHeadImage(uuid)
-
-		return ctx.JSON(fiber.Map{"url": "/cdn/images/" + skinStruct.Username + "-" + uuid + ".png"})
-	})
-
-	no_cache_group.Get("/full", func(ctx *fiber.Ctx) error {
-
-		skinCollection := util.Database().Collection("skins")
-
-		var skinResult bson.M
-		err := skinCollection.FindOne(context.TODO(), bson.M{"username": ctx.Params("username")}).Decode(&skinResult)
-		if err != nil {
-			return fiber.NewError(404, "Username not found")
-		}
-
-		skinStruct := skin.S(skinResult["username"].(string), skinResult["skinstring"].(string))
-
-		uuid := skin.PseudoUuid()
-		skinStruct.SaveFullImage(uuid)
-
-		return ctx.JSON(fiber.Map{"url": "/cdn/images/" + skinStruct.Username + "-" + uuid + ".png"})
-	})
-
 	app.Get("/api/:username/img/full", func(ctx *fiber.Ctx) error {
 		skinCollection := util.Database().Collection("skins")
 
@@ -151,7 +112,14 @@ func main() {
 		skinStruct := skin.S(skinResult["username"].(string), skinResult["skinstring"].(string))
 
 		workingDirectory, _ := os.Getwd()
-		return ctx.SendFile(workingDirectory + "/public/images/" + skinStruct.Username + "-full.png")
+		path := workingDirectory + "/public/images/" + skinStruct.Username + "-full.png"
+
+		if _, err := os.Stat(path); errors.Is(err, os.ErrNotExist) {
+			skinStruct.SaveFullImage("full")
+			log.Println("Creating full-image from database records for " + skinStruct.Username)
+		}
+
+		return ctx.SendFile(path)
 	})
 
 	app.Get("/api/:username/img/head", func(ctx *fiber.Ctx) error {
@@ -166,7 +134,14 @@ func main() {
 		skinStruct := skin.S(skinResult["username"].(string), skinResult["skinstring"].(string))
 
 		workingDirectory, _ := os.Getwd()
-		return ctx.SendFile(workingDirectory + "/public/images/" + skinStruct.Username + "-head.png")
+		path := workingDirectory + "/public/images/" + skinStruct.Username + "-head.png"
+
+		if _, err := os.Stat(path); errors.Is(err, os.ErrNotExist) {
+			skinStruct.SaveHeadImage("head")
+			log.Println("Creating head-image from database records for " + skinStruct.Username)
+		}
+
+		return ctx.SendFile(path)
 	})
 
 	log.Fatal(app.Listen(":3000"))
