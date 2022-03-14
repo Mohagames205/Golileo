@@ -135,6 +135,17 @@ img {
         flex-direction: column;
     }
 
+    input[type=text] {
+        width: 53vw;
+    }
+
+    body {
+        margin-left: 10px;
+        margin-right: 10px;
+    }
+
+
+
     img {
         width: 75vw;
         height: auto;
