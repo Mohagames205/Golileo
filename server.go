@@ -75,8 +75,9 @@ func main() {
 		 */
 		skinStruct := skin.S(payload.Username, payload.Skin)
 
-		skinStruct.SaveFullImage("full")
-		skinStruct.SaveHeadImage("head")
+		skinStruct.SaveFullImage()
+		skinStruct.SaveHeadImage()
+		skinStruct.SaveFullFrontImage()
 
 		_, err := skinCollection.UpdateOne(context.TODO(), filter, update, opts)
 
@@ -115,7 +116,7 @@ func main() {
 		path := workingDirectory + "/public/images/" + skinStruct.Username + "-full.png"
 
 		if _, err := os.Stat(path); errors.Is(err, os.ErrNotExist) {
-			skinStruct.SaveFullImage("full")
+			skinStruct.SaveFullImage()
 			log.Println("Creating full-image from database records for " + skinStruct.Username)
 		}
 
@@ -137,12 +138,40 @@ func main() {
 		path := workingDirectory + "/public/images/" + skinStruct.Username + "-head.png"
 
 		if _, err := os.Stat(path); errors.Is(err, os.ErrNotExist) {
-			skinStruct.SaveHeadImage("head")
+			skinStruct.SaveHeadImage()
 			log.Println("Creating head-image from database records for " + skinStruct.Username)
 		}
 
 		return ctx.SendFile(path)
 	})
 
+	app.Get("/api/:username/img/full-front", func(ctx *fiber.Ctx) error {
+		skinStruct, err := GetSkinStructByName(ctx.Params("username"))
+
+		if err != nil {
+			return fiber.NewError(404, "Username not found")
+		}
+
+		workingDirectory, _ := os.Getwd()
+		path := workingDirectory + "/public/images/" + skinStruct.Username + "-full_front.png"
+
+		if _, err := os.Stat(path); errors.Is(err, os.ErrNotExist) {
+			skinStruct.SaveFullFrontImage()
+			log.Println("Creating full_front-image from database records for " + skinStruct.Username)
+		}
+
+		return ctx.SendFile(path)
+	})
+
 	log.Fatal(app.Listen(":3000"))
+}
+
+func GetSkinStructByName(name string) (*skin.Skin, error) {
+	skinCollection := util.Database().Collection("skins")
+
+	var skinResult bson.M
+	err := skinCollection.FindOne(context.TODO(), bson.M{"username": name}).Decode(&skinResult)
+
+	skinStruct := skin.S(skinResult["username"].(string), skinResult["skinstring"].(string))
+	return skinStruct, err
 }
